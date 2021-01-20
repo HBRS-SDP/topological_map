@@ -2,8 +2,8 @@
 
 from setuptools import setup
 
-setup(name='topologicalmap',
-      version='3.0.0',
+setup(name='topological_map',
+      version='1.0.0',
       description='BRSU Topological Map',
       package_dir={'': '.'}
       )
