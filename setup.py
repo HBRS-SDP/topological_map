@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
-from catkin_pkg.python_setup import generate_distutils_setup
+from setuptools import setup
 
-d = generate_distutils_setup(
-    packages=['topological_map_ros'],
-    package_dir={'': 'ros/src'}
-)
-
-setup(**d)
+setup(name='topologicalmap',
+      version='3.0.0',
+      description='BRSU Topological Map',
+      package_dir={'': '.'}
+      )
