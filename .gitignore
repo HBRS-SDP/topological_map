@@ -1,1 +1,6 @@
 *.pyc
+*.pyc
+*.egg-info/
+*.egg
+eggs/
+.eggs/
