@@ -2002,7 +2002,7 @@ nodes:
     floor_number: 0
     type: area
     exit_door: 0
-    docking: false
+    docking: true
     undocking: true
   - id: 43
     topology_id: 43
