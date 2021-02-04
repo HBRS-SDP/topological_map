@@ -16,10 +16,10 @@ catkin_python_setup()
 add_service_files(
   DIRECTORY ros/srv
   FILES
-  TopologicalPath.srv
-  TopologicalPosition.srv
-  TopologicalMapInfo.srv
-  NodeInfo.srv
+    TopologicalPath.srv
+    TopologicalPosition.srv
+    TopologicalMapInfo.srv
+    NodeInfo.srv
 )
 
 ## Generate added messages and services with any dependencies listed here

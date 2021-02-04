@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+    <node name="topological_dispatcher" pkg="topological_navigation" type="topological_dispatcher" output="screen">
+        <remap from="/get_topology_node" to="get_topology_node" />
+    </node>
+</launch>

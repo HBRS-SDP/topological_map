@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>ropod_navigation</name>
+  <name>topological_map</name>
   <version>0.0.0</version>
   <description>The topological_map package</description>
+  <maintainer email="robotics@inf.h-brs.de">MAS robotics</maintainer>
 
   <license>TODO</license>
 
