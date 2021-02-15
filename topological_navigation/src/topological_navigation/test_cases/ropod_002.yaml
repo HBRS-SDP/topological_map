@@ -1,0 +1,79 @@
+- area:
+    - id: "88"
+    - name: C002
+    - type: area
+    - sub_areas:
+        - id: "88"
+        - name: C002
+
+- area:
+    - id: "51"
+    - name: INT-C002
+    - type: area
+    - sub_areas:
+        - id: "51"
+        - name: INT-C002
+
+- area:
+    - id: "17"
+    - name: C012
+    - type: area
+    - sub_areas:
+        - id: "17"
+        - name: C012
+
+- area:
+    - id: "44"
+    - name: LC-015
+    - type: area
+    - sub_areas:
+        - id: "44"
+        - name: LC-015
+
+- area:
+    - id: "46"
+    - name: LC-006
+    - type: area
+    - sub_areas:
+        - id: "46"
+        - name: LC-006
+
+- area:
+    - id: "64"
+    - name: C013-2
+    - type: area
+    - sub_areas:
+        - id: "64"
+        - name: C013-2
+
+- area:
+    - id: "14"
+    - name: C013-1
+    - type: area
+    - sub_areas:
+        - id: "14"
+        - name: C013-1
+
+- area:
+    - id: "36"
+    - name: LC-004
+    - type: area
+    - sub_areas:
+        - id: "36"
+        - name: LC-004
+
+- area:
+    - id: "158"
+    - name: C015
+    - type: area
+    - sub_areas:
+        - id: "158"
+        - name: C015
+
+- area:
+    - id: "137"
+    - name: LC-010
+    - type: area
+    - sub_areas:
+        - id: "137"
+        - name: LC-010

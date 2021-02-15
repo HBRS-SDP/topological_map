@@ -3,10 +3,6 @@
 import roslaunch
 import rospy
 
-# import actionlib
-
-# from ropod_ros_msgs.msg import GetTopologyNodeAction, GetTopologyNodeGoal
-
 from topological_navigation.topological_dispatcher import TopologicalDispatcher
 
 if __name__ == "__main__":
@@ -14,34 +10,3 @@ if __name__ == "__main__":
 
     t_dispatcher = TopologicalDispatcher()
     rospy.spin()
-
-    # get_topology_node_client = actionlib.SimpleActionClient(
-    #     "/get_topology_node", GetTopologyNodeAction
-    # )
-
-    # rospy.loginfo("[Topological Dispatcher] Waiting for get_topology_node server...")
-
-    # if get_topology_node_client.wait_for_server(rospy.Duration(5)):
-    #     rospy.loginfo("[Topological Dispatcher] Connected to get_topology_node server!")
-    #     node_goal = GetTopologyNodeGoal()
-    #     while not rospy.is_shutdown():
-    #         node_id = input("Enter Node id: ")
-    #         node_name = input("Enter Node name: ")
-    #         node_type = input("Enter Node type: ")
-
-    #         node_goal.id = int(node_id)
-    #         node_goal.ref = node_name
-    #         node_goal.type = node_type
-
-    #         get_topology_node_client.send_goal(node_goal)
-
-    #         get_topology_node_client.wait_for_result()
-
-    #         node_result = get_topology_node_client.get_result()
-
-    #         rospy.loginfo(node_result.position.x)
-
-    # else:
-    #     rospy.logerr(
-    #         "[Topological Dispatcher] Failed to connect to get_topology_node server..."
-    #     )

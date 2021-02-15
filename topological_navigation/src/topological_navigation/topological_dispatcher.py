@@ -3,28 +3,41 @@
 import rospy
 import actionlib
 import numpy as np
+from transforms3d import euler
+from topological_navigation.topological_navigation import TopologicalNavigator
 
+from visualization_msgs.msg import Marker
 from ropod_ros_msgs.msg import GetTopologyNodeAction, GetTopologyNodeGoal
 from ropod_ros_msgs.msg import GoToAction, GoToResult
 
 
 class TopologicalDispatcher:
     def __init__(self):
-
         self.get_topology_node_client = actionlib.SimpleActionClient(
             "/get_topology_node", GetTopologyNodeAction
         )
-        if self.check_for_client():
+        if self.checkNodeClient():
             self.goto_action_server = actionlib.SimpleActionServer(
                 "goto", GoToAction, execute_cb=self.goToActionExecute, auto_start=False
             )
             self.goto_action_server.start()
 
+            self.navigator = TopologicalNavigator()
+
+            self.marker_pub = rospy.Publisher(
+                "napoleon_navigation/napoleon_driving/ropodpoints",
+                Marker,
+                queue_size=10,
+            )
+
+            self.marker = Marker()
+            self.marker.id = 0
+
             self.get_topology_goal = GetTopologyNodeGoal()
 
             self.goto_action_result = GoToResult()
 
-    def check_for_client(self):
+    def checkNodeClient(self):
         # wait for get_topology_node server
         rospy.loginfo(
             "[Topological Dispatcher] Waiting for get_topology_node server..."
@@ -48,50 +61,37 @@ class TopologicalDispatcher:
 
         waypoints = goal.action.areas
         rospy.loginfo(
-            "[Topological Dispatcher] GOTO Action received has %s waypoints",
+            "[Topological Dispatcher] GOTO Action received has %s waypoints.",
             len(waypoints),
         )
 
-        if len(waypoints) > 1:
-            desired_orientation = self.compute_orientation(waypoints[0], waypoints[1])
+        for waypoint in waypoints:
+            rospy.loginfo(
+                "[Topological Dispatcher] Moving robot to: %s", waypoint.name,
+            )
+            waypoint_pose = self.getTopologyNode(waypoint).position
+            self.visualizeWaypoint(waypoint_pose)
 
-            if desired_orientation is not None:
+            result = self.navigator.executeNavigation(waypoint_pose)
+
+            if result is False:
                 rospy.loginfo(
-                    "[Topological Dispatcher] Desired starting orientation for robot is: %s",
-                    desired_orientation,
+                    "[Topological Dispatcher] Robot couldn't reach %s", waypoint.name
                 )
-                rospy.loginfo("[Topological Dispatcher] GOTO Action Complete")
-                self.goto_action_result.success = True
-                self.goto_action_server.set_succeeded(self.goto_action_result)
-            else:
-                rospy.loginfo("[Topological Dispatcher] GOTO Action Failed!")
                 self.goto_action_result.success = False
                 self.goto_action_server.set_succeeded(self.goto_action_result)
-        else:
-            rospy.loginfo("[Topological Dispatcher] GOTO Action Complete")
-            self.goto_action_result.success = True
-            self.goto_action_server.set_succeeded(self.goto_action_result)
+                return
 
-    def compute_orientation(self, area1, area2):
-        area1_position = self.send_get_topology_goal(area1).position
-        rospy.loginfo(
-            "area1 position recieved: %s, %s", area1_position.x, area1_position.y
-        )
-        area2_position = self.send_get_topology_goal(area2).position
-        rospy.loginfo(
-            "area2 position recieved: %s, %s", area2_position.x, area2_position.y
-        )
-
-        if None in (area1_position, area2_position):
-            rospy.loginfo("[Topological Dispatcher] Error receiving node position")
-            return None
-        else:
-            return np.arctan2(
-                (area2_position.y - area1_position.y),
-                (area2_position.x - area1_position.x),
+            rospy.loginfo(
+                "[Topological Dispatcher] Robot reached %s", waypoint.name,
             )
+            rospy.sleep(rospy.Duration(5))
 
-    def send_get_topology_goal(self, area):
+        rospy.loginfo("[Topological Dispatcher] GOTO Action Complete")
+        self.goto_action_result.success = True
+        self.goto_action_server.set_succeeded(self.goto_action_result)
+
+    def getTopologyNode(self, area):
         rospy.loginfo("[Topological Dispatcher] Sending Node Postion Request")
 
         self.get_topology_goal.id = int(area.id)
@@ -107,3 +107,25 @@ class TopologicalDispatcher:
 
         else:
             return None
+
+    def visualizeWaypoint(self, waypoint):
+        self.marker.header.frame_id = "/map"
+        self.marker.id = self.marker.id + 1
+        self.marker.type = 1
+        self.marker.action = 0
+
+        self.marker.pose.position.x = waypoint.x
+        self.marker.pose.position.y = waypoint.y
+
+        self.marker.pose.orientation.w = 1.0
+
+        self.marker.scale.x = 0.75
+        self.marker.scale.y = 0.75
+        self.marker.scale.z = 0.01
+
+        self.marker.color.r = 0.0
+        self.marker.color.b = 0.0
+        self.marker.color.g = 1.0
+        self.marker.color.a = 1.0
+
+        self.marker_pub.publish(self.marker)

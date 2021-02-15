@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
+    <arg name="robot_name" default="ropod_001"/>
 
     <node name="topological_dispatcher" pkg="topological_navigation" type="topological_dispatcher" output="screen">
         <remap from="/get_topology_node" to="get_topology_node" />
+        <remap from="amcl_pose" to="/$(arg robot_name)_amcl/pose"/>
     </node>
 </launch>
