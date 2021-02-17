@@ -36,7 +36,7 @@ def loadGoToAreas(robot_name):
 
 def main():
     try:
-        route_nav_client = actionlib.SimpleActionClient("/ropod_002/goto", GoToAction)
+        route_nav_client = actionlib.SimpleActionClient("/ropod_001/goto", GoToAction)
         rospy.loginfo("Waiting for topological dispatch server")
         route_nav_client.wait_for_server()
         rospy.loginfo("Connected topological dispatch server")
@@ -44,7 +44,7 @@ def main():
         goal = GoToGoal()
         goal.action = Action()
         goal.action.action_id = "1234567890"
-        areas = loadGoToAreas("ropod_002")
+        areas = loadGoToAreas("ropod_001")
         goal.action.areas = areas
         goal.action.type = "GOTO"
         goal.action.start_floor = 0

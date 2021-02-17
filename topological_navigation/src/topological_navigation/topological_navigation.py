@@ -1,22 +1,48 @@
 #! /usr/bin/env python
 
 import rospy
+import actionlib
 import numpy as np
 from transforms3d import euler
 
 from geometry_msgs.msg import Pose, PoseWithCovarianceStamped, Twist
+from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
+from geometry_msgs.msg import Point
+from actionlib_msgs.msg import *
 
 
 class TopologicalNavigator:
     def __init__(self):
-        self.robot_pose = Pose()
-        self.robot_vel = Twist()
-
-        self.robot_pose_subscriber = rospy.Subscriber(
-            "amcl_pose", PoseWithCovarianceStamped, callback=self.getRobotPose
+        self.move_base_client = actionlib.SimpleActionClient(
+            "move_base", MoveBaseAction
         )
 
-        self.robot_vel_publisher = rospy.Publisher("cmd_vel", Twist, queue_size=10)
+        if self.checkMoveBaseClient():
+            self.goal_node = MoveBaseGoal()
+
+            self.robot_pose = Pose()
+            # self.robot_vel = Twist()
+
+            self.robot_pose_subscriber = rospy.Subscriber(
+                "amcl_pose", PoseWithCovarianceStamped, callback=self.getRobotPose
+            )
+
+            # self.robot_vel_publisher = rospy.Publisher("cmd_vel", Twist, queue_size=10)
+
+    def checkMoveBaseClient(self):
+        # wait for get_topology_node server
+        rospy.loginfo("[Topological Navigator] Waiting for move_base action server...")
+
+        if self.move_base_client.wait_for_server(rospy.Duration(60)):
+            rospy.loginfo(
+                "[Topological Navigator] Connected to move_base action server!"
+            )
+            return True
+        else:
+            rospy.logerr(
+                "[Topological Navigator] Failed to connect to move_base action server..."
+            )
+            return False
 
     def executeNavigation(self, waypoint):
 
@@ -24,39 +50,37 @@ class TopologicalNavigator:
             rospy.loginfo("[Topological Navigator] Robot already at waypoint")
             return True
 
-        desired_orientation = self.computeOrientation(waypoint)
+        # desired_orientation = self.computeOrientation(waypoint)
 
-        if self.checkOrientationWithinTolerance(desired_orientation) is False:
-            rospy.loginfo("[Topological Navigator] Re-Orientating Robot.....")
-            self.reOrientRobot(desired_orientation)
-            rospy.loginfo("[Topological Navigator] Done Orientating Robot")
+        # if self.checkOrientationWithinTolerance(desired_orientation) is False:
+        #     rospy.loginfo("[Topological Navigator] Re-Orientating Robot.....")
+        #     self.reOrientRobot(desired_orientation)
+        #     rospy.loginfo("[Topological Navigator] Done Orientating Robot")
 
         rospy.loginfo("[Topological Navigator] Moving Robot...")
 
-        while self.checkPositionWithinTolerance(waypoint) is False:
-            vel_x, ang_z = self.computeRobotVelocity(desired_orientation)
-            self.moveRobot(vel_x, 0.0, ang_z)
-            rospy.sleep(rospy.Duration(1))
+        # while self.checkPositionWithinTolerance(waypoint) is False:
+        #     vel_x, ang_z = self.computeRobotVelocity(waypoint)
+        #     self.moveRobot(vel_x, 0.0, ang_z)
 
-        self.stopRobot()
+        # self.stopRobot()
 
-        rospy.loginfo("[Topological Navigator] Robot Reach Waypoint")
+        self.sendMoveGoal(waypoint)
+
+        self.move_base_client.wait_for_result(rospy.Duration(60))
+
+        if self.move_base_client.get_state() == GoalStatus.SUCCEEDED:
+            rospy.loginfo("[Topological Navigator] Robot Reach Waypoint")
+            return True
+        else:
+            rospy.loginfo("[Topological Navigator] Robot Failed to Reach Waypoint")
+            return False
 
     def checkPositionWithinTolerance(self, waypoint):
-        # rospy.loginfo(
-        #     "[Topological Navigator] Desired position: %s, %s", waypoint.x, waypoint.y
-        # )
-
-        # rospy.loginfo(
-        #     "[Topological Navigator] Robot's position: %s, %s",
-        #     self.robot_pose.position.x,
-        #     self.robot_pose.position.y,
-        # )
-
         x_pose_diff = waypoint.x - self.robot_pose.position.x
         y_pose_diff = waypoint.y - self.robot_pose.position.y
 
-        if np.abs(x_pose_diff) < 0.75 and np.abs(y_pose_diff) < 0.75:
+        if np.abs(x_pose_diff) < 0.5 and np.abs(y_pose_diff) < 0.5:
             return True
 
         return False
@@ -64,7 +88,6 @@ class TopologicalNavigator:
     def checkOrientationWithinTolerance(self, desired_orientation):
 
         robot_yaw = self.getRobotOrientation()
-        # rospy.loginfo("[Topological Navigator] Robot's orientation: %s", robot_yaw)
 
         orientation_diff = self.clipToPi(desired_orientation - robot_yaw)
 
@@ -80,22 +103,16 @@ class TopologicalNavigator:
             (waypoint.x - self.robot_pose.position.x),
         )
 
-    def computeRobotVelocity(self, desired_orientation):
+    def computeRobotVelocity(self, waypoint):
         s = 0.5  # m/s (constant speed)
-        # x_diff = waypoint.x - self.robot_pose.position.x
-        # y_diff = waypoint.y - self.robot_pose.position.y
 
-        # d = np.sqrt(x_diff ** 2 + y_diff ** 2)
-        # rospy.loginfo("[Topological Navigator] Distance to waypoint: %s", d)
+        desired_orientation = self.computeOrientation(waypoint)
 
-        # vel_x = (s / d) * x_diff
-        # vel_y = (s / d) * y_diff
-        # rospy.loginfo("[Topological Navigator] vel_x: %s, vel_y: %s", vel_x, vel_y)
-        if (self.getRobotOrientation() - desired_orientation) > 0.2:
+        if self.checkOrientationWithinTolerance(desired_orientation) is False:
             if self.getRobotOrientation() > desired_orientation:
-                ang_z = -1
+                ang_z = -0.25
             else:
-                ang_z = 1
+                ang_z = 0.25
         else:
             ang_z = 0
 
@@ -112,9 +129,9 @@ class TopologicalNavigator:
     def reOrientRobot(self, desired_orientation):
         while self.checkOrientationWithinTolerance(desired_orientation) is False:
             if self.getRobotOrientation() > desired_orientation:
-                self.moveRobot(0, 0, -1)
+                self.moveRobot(0, 0, -0.5)
             else:
-                self.moveRobot(0, 0, 1)
+                self.moveRobot(0, 0, 0.5)
 
     def moveRobot(self, vel_x, vel_y, ang_z):
         self.robot_vel.linear.x = vel_x
@@ -156,3 +173,15 @@ class TopologicalNavigator:
             angle += 2 * np.pi
 
         return angle
+
+    def sendMoveGoal(self, waypoint):
+        self.goal_node.target_pose.header.frame_id = "/map"
+
+        self.goal_node.target_pose.pose.position = Point(waypoint.x, waypoint.y, 0)
+        self.goal_node.target_pose.pose.orientation.x = 0.0
+        self.goal_node.target_pose.pose.orientation.y = 0.0
+        self.goal_node.target_pose.pose.orientation.z = 0.0
+        self.goal_node.target_pose.pose.orientation.w = 1.0
+
+        rospy.loginfo("Sending goal location ...")
+        self.move_base_client.send_goal(self.goal_node)

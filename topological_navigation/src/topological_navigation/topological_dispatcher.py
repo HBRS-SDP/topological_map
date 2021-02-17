@@ -85,7 +85,7 @@ class TopologicalDispatcher:
             rospy.loginfo(
                 "[Topological Dispatcher] Robot reached %s", waypoint.name,
             )
-            rospy.sleep(rospy.Duration(5))
+            rospy.sleep(rospy.Duration(2))
 
         rospy.loginfo("[Topological Dispatcher] GOTO Action Complete")
         self.goto_action_result.success = True
@@ -119,8 +119,8 @@ class TopologicalDispatcher:
 
         self.marker.pose.orientation.w = 1.0
 
-        self.marker.scale.x = 0.75
-        self.marker.scale.y = 0.75
+        self.marker.scale.x = 0.5
+        self.marker.scale.y = 0.5
         self.marker.scale.z = 0.01
 
         self.marker.color.r = 0.0
