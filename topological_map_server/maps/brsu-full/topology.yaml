@@ -2135,7 +2135,7 @@ nodes:
     type: area
     exit_door: 0
     docking: false
-    undocking: false
+    undocking: true
   - id: 54
     topology_id: 54
     label: B048

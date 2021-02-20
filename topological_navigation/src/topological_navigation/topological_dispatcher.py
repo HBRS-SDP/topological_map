@@ -4,8 +4,8 @@ import rospy
 import actionlib
 import numpy as np
 from transforms3d import euler
-from topological_navigation.topological_navigation import TopologicalNavigator
 
+from topological_navigation.topological_navigation import TopologicalNavigator
 from visualization_msgs.msg import Marker
 from ropod_ros_msgs.msg import GetTopologyNodeAction, GetTopologyNodeGoal
 from ropod_ros_msgs.msg import GoToAction, GoToResult
@@ -65,27 +65,39 @@ class TopologicalDispatcher:
             len(waypoints),
         )
 
-        for waypoint in waypoints:
+        for n in range(0, len(waypoints)):
             rospy.loginfo(
-                "[Topological Dispatcher] Moving robot to: %s", waypoint.name,
+                "[Topological Dispatcher] Moving robot to: %s", waypoints[n].name,
             )
-            waypoint_pose = self.getTopologyNode(waypoint).position
+
+            waypoint_pose = self.getTopologyNode(waypoints[n]).position
+            if n < (len(waypoints) - 1):
+                desired_orientation = self.computeOrientation(
+                    waypoint_pose, self.getTopologyNode(waypoints[n + 1]).position
+                )
+            else:
+                desired_orientation = self.computeOrientation(
+                    self.getTopologyNode(waypoints[n - 1]).position, waypoint_pose
+                )
+
             self.visualizeWaypoint(waypoint_pose)
 
-            result = self.navigator.executeNavigation(waypoint_pose)
+            result = self.navigator.executeNavigation(
+                waypoint_pose, desired_orientation
+            )
 
             if result is False:
                 rospy.loginfo(
-                    "[Topological Dispatcher] Robot couldn't reach %s", waypoint.name
+                    "[Topological Dispatcher] Robot couldn't reach %s",
+                    waypoints[n].name,
                 )
                 self.goto_action_result.success = False
                 self.goto_action_server.set_succeeded(self.goto_action_result)
                 return
 
             rospy.loginfo(
-                "[Topological Dispatcher] Robot reached %s", waypoint.name,
+                "[Topological Dispatcher] Robot reached %s", waypoints[n].name,
             )
-            rospy.sleep(rospy.Duration(2))
 
         rospy.loginfo("[Topological Dispatcher] GOTO Action Complete")
         self.goto_action_result.success = True
@@ -108,6 +120,10 @@ class TopologicalDispatcher:
         else:
             return None
 
+    def computeOrientation(self, waypoint1, waypoint2):
+
+        return np.arctan2((waypoint2.y - waypoint1.y), (waypoint2.x - waypoint1.x),)
+
     def visualizeWaypoint(self, waypoint):
         self.marker.header.frame_id = "/map"
         self.marker.id = self.marker.id + 1
@@ -119,8 +135,8 @@ class TopologicalDispatcher:
 
         self.marker.pose.orientation.w = 1.0
 
-        self.marker.scale.x = 0.5
-        self.marker.scale.y = 0.5
+        self.marker.scale.x = 0.25
+        self.marker.scale.y = 0.25
         self.marker.scale.z = 0.01
 
         self.marker.color.r = 0.0

@@ -1,0 +1,111 @@
+- area:
+      - id: "47"
+      - name: LC-050
+      - type: area
+      - sub_areas:
+            - id: "47"
+            - name: LC-050
+
+- area:
+      - id: "62"
+      - name: INT-C001
+      - type: area
+      - sub_areas:
+            - id: "62"
+            - name: INT-C001
+
+- area:
+      - id: "84"
+      - name: C018-1
+      - type: area
+      - sub_areas:
+            - id: "84"
+            - name: C018-1
+
+- area:
+      - id: "118"
+      - name: C018-2
+      - type: area
+      - sub_areas:
+            - id: "118"
+            - name: C018-2
+
+- area:
+      - id: "33"
+      - name: LC-007
+      - type: area
+      - sub_areas:
+            - id: "33"
+            - name: LC-007
+
+- area:
+      - id: "133"
+      - name: C016-1
+      - type: area
+      - sub_areas:
+            - id: "133"
+            - name: C016-1
+
+- area:
+      - id: "55"
+      - name: LC-003
+      - type: area
+      - sub_areas:
+            - id: "55"
+            - name: LC-003
+
+- area:
+      - id: "94"
+      - name: C016-2
+      - type: area
+      - sub_areas:
+            - id: "94"
+            - name: C016-2
+
+- area:
+      - id: "37"
+      - name: C014-1
+      - type: area
+      - sub_areas:
+            - id: "37"
+            - name: C014-1
+
+- area:
+      - id: "76"
+      - name: LC-005
+      - type: area
+      - sub_areas:
+            - id: "76"
+            - name: LC-005
+
+- area:
+      - id: "132"
+      - name: C014-2
+      - type: area
+      - sub_areas:
+            - id: "132"
+            - name: C014-2
+
+- area:
+      - id: "17"
+      - name: C012
+      - type: area
+      - sub_areas:
+            - id: "17"
+            - name: C012
+
+- area:
+      - id: "51"
+      - name: INT-C002
+      - type: area
+      - sub_areas:
+            - id: "51"
+            - name: INT-C002
+
+- area:
+      - id: "42"
+      - name: LC-016
+      - type: area
+      - sub_areas:
+            - id: "42"
+            - name: LC-016

@@ -29,17 +29,10 @@ class TopologicalMapServer:
         self._result = GetTopologyNodeResult()
 
     def node_position_cb(self, node):
-        rospy.loginfo(
-            "Received node with id: %s, name: %s, type: %s",
-            node.id,
-            node.ref,
-            node.type,
-        )
 
         self._result.position = Position()
 
         if self.map_graph.nodes(data=True)[node.id]["label"] == node.ref:
-            rospy.loginfo("Found node")
             node_position = self.map_graph.nodes(data=True)[node.id]["pose"]
 
             self._result.position.x = node_position[0]
@@ -48,5 +41,4 @@ class TopologicalMapServer:
 
             self.get_topology_node_server.set_succeeded(self._result)
         else:
-            rospy.loginfo("No node found")
             self.get_topology_node_server.set_aborted(self._result)

@@ -1,0 +1,79 @@
+- area:
+      - id: "88"
+      - name: C002
+      - type: area
+      - sub_areas:
+            - id: "88"
+            - name: C002
+
+- area:
+      - id: "11"
+      - name: INT-C007
+      - type: area
+      - sub_areas:
+            - id: "11"
+            - name: INT-C007
+
+- area:
+      - id: "22"
+      - name: LA-001
+      - type: area
+      - sub_areas:
+            - id: "22"
+            - name: LA-001
+
+- area:
+      - id: "8"
+      - name: A-main-entrance
+      - type: area
+      - sub_areas:
+            - id: "8"
+            - name: A-main-entrance
+
+- area:
+      - id: "12"
+      - name: LA-004
+      - type: area
+      - sub_areas:
+            - id: "12"
+            - name: LA-004
+
+- area:
+      - id: "75"
+      - name: LA-005
+      - type: area
+      - sub_areas:
+            - id: "75"
+            - name: LA-005
+
+- area:
+      - id: "27"
+      - name: mensa-entrance
+      - type: area
+      - sub_areas:
+            - id: "27"
+            - name: mensa-entrance
+
+- area:
+      - id: "105"
+      - name: LA-007
+      - type: area
+      - sub_areas:
+            - id: "105"
+            - name: LA-007
+
+- area:
+      - id: "128"
+      - name: LA-008
+      - type: area
+      - sub_areas:
+            - id: "128"
+            - name: LA-008
+
+- area:
+      - id: "157"
+      - name: LA-010
+      - type: area
+      - sub_areas:
+            - id: "157"
+            - name: LA-010
