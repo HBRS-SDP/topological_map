@@ -20,7 +20,6 @@ class TopologicalDispatcher:
             self.goto_action_server = actionlib.SimpleActionServer(
                 "goto", GoToAction, execute_cb=self.goToActionExecute, auto_start=False
             )
-            self.goto_action_server.start()
 
             self.navigator = TopologicalNavigator()
 
@@ -34,8 +33,9 @@ class TopologicalDispatcher:
             self.marker.id = 0
 
             self.get_topology_goal = GetTopologyNodeGoal()
-
             self.goto_action_result = GoToResult()
+
+            self.goto_action_server.start()
 
     def checkNodeClient(self):
         # wait for get_topology_node server
@@ -104,17 +104,13 @@ class TopologicalDispatcher:
         self.goto_action_server.set_succeeded(self.goto_action_result)
 
     def getTopologyNode(self, area):
-        rospy.loginfo("[Topological Dispatcher] Sending Node Postion Request")
-
         self.get_topology_goal.id = int(area.id)
         self.get_topology_goal.ref = area.name.split("_")[-1]
         self.get_topology_goal.type = area.type
 
         self.get_topology_node_client.send_goal(self.get_topology_goal)
-        rospy.loginfo("[Topological Dispatcher] Node Postion Request Sent!")
 
         if self.get_topology_node_client.wait_for_result(rospy.Duration(5)):
-            rospy.loginfo("[Topological Dispatcher] Node Postion Received!")
             return self.get_topology_node_client.get_result()
 
         else:
@@ -135,8 +131,8 @@ class TopologicalDispatcher:
 
         self.marker.pose.orientation.w = 1.0
 
-        self.marker.scale.x = 0.25
-        self.marker.scale.y = 0.25
+        self.marker.scale.x = 0.3
+        self.marker.scale.y = 0.3
         self.marker.scale.z = 0.01
 
         self.marker.color.r = 0.0

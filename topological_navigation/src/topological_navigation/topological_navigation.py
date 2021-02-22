@@ -47,7 +47,15 @@ class TopologicalNavigator:
             rospy.loginfo("[Topological Navigator] Robot already at waypoint")
             return True
 
-        # desired_orientation = self.computeOrientation(waypoint)
+        # if self.checkOrientationWithinTolerance(desired_orientation) is False:
+        #     rospy.loginfo("[Topological Navigator] Re-Orienting Robot...")
+        #     self.sendMoveGoal(self.robot_pose.position, desired_orientation)
+
+        #     self.move_base_client.wait_for_result(rospy.Duration(60))
+
+        #     if self.move_base_client.get_state() != GoalStatus.SUCCEEDED:
+        #         rospy.loginfo("[Topological Navigator] Could not re-orient robot")
+        #         return False
 
         rospy.loginfo("[Topological Navigator] Moving Robot...")
 
@@ -71,6 +79,23 @@ class TopologicalNavigator:
 
         return False
 
+    def checkOrientationWithinTolerance(self, desired_orientation):
+
+        robot_yaw = self.getRobotOrientation()
+
+        orientation_diff = self.clipToPi(desired_orientation - robot_yaw)
+        rospy.loginfo(
+            "[Topological Navigator] Orientation Diff: %s - %s = %s",
+            desired_orientation,
+            robot_yaw,
+            orientation_diff,
+        )
+
+        if np.abs(orientation_diff) > 1.571:
+            return False
+
+        return True
+
     def getRobotPose(self, pose_msg):
         self.robot_pose.position.x = pose_msg.pose.pose.position.x
         self.robot_pose.position.y = pose_msg.pose.pose.position.y
@@ -78,6 +103,27 @@ class TopologicalNavigator:
         self.robot_pose.orientation.y = pose_msg.pose.pose.orientation.y
         self.robot_pose.orientation.z = pose_msg.pose.pose.orientation.z
         self.robot_pose.orientation.w = pose_msg.pose.pose.orientation.w
+
+    def getRobotOrientation(self):
+        orientation = [
+            self.robot_pose.orientation.w,
+            self.robot_pose.orientation.x,
+            self.robot_pose.orientation.y,
+            self.robot_pose.orientation.z,
+        ]
+
+        roll, pitch, yaw = euler.quat2euler(orientation)
+        return yaw
+
+    def clipToPi(self, angle):
+        angle = np.fmod(angle, 2 * np.pi)
+
+        if angle >= np.pi:
+            angle -= 2 * np.pi
+        elif angle <= -np.pi:
+            angle += 2 * np.pi
+
+        return angle
 
     def sendMoveGoal(self, waypoint, desired_orientation):
         self.goal_node.target_pose.header.frame_id = "/map"

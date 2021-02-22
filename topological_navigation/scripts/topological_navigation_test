@@ -8,8 +8,8 @@ from ropod_ros_msgs.msg import GoToAction, GoToGoal
 from ropod_ros_msgs.msg import Action, Area, SubArea
 
 
-def loadGoToAreas(robot_name, case):
-    file_name = robot_name + "_" + case + ".yaml"
+def loadGoToAreas(robot_name, route_number):
+    file_name = robot_name + "_" + route_number + ".yaml"
 
     with open_text("topological_navigation.test_cases", file_name) as yaml_file:
         areas_msg = yaml.load(yaml_file, Loader=yaml.Loader)
@@ -34,9 +34,11 @@ def loadGoToAreas(robot_name, case):
     return areas
 
 
-def main():
+def main(robot_name, route_number):
     try:
-        route_nav_client = actionlib.SimpleActionClient("/ropod_002/goto", GoToAction)
+        route_nav_client = actionlib.SimpleActionClient(
+            "/" + robot_name + "/goto", GoToAction
+        )
         rospy.loginfo("Waiting for topological dispatch server")
         route_nav_client.wait_for_server()
         rospy.loginfo("Connected topological dispatch server")
@@ -44,7 +46,7 @@ def main():
         goal = GoToGoal()
         goal.action = Action()
         goal.action.action_id = "1234567890"
-        areas = loadGoToAreas("ropod_002", "2")
+        areas = loadGoToAreas(robot_name, route_number)
         goal.action.areas = areas
         goal.action.type = "GOTO"
         goal.action.start_floor = 0
@@ -66,4 +68,6 @@ def main():
 
 if __name__ == "__main__":
     rospy.init_node("route_navigation_test")
-    main()
+    robot_name = input("Which Robot to test (ropod_001/ropod_002): ")
+    route_number = input("Which Route (1/2): ")
+    main(robot_name, route_number)
