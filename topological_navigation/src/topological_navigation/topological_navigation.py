@@ -47,16 +47,6 @@ class TopologicalNavigator:
             rospy.loginfo("[Topological Navigator] Robot already at waypoint")
             return True
 
-        # if self.checkOrientationWithinTolerance(desired_orientation) is False:
-        #     rospy.loginfo("[Topological Navigator] Re-Orienting Robot...")
-        #     self.sendMoveGoal(self.robot_pose.position, desired_orientation)
-
-        #     self.move_base_client.wait_for_result(rospy.Duration(60))
-
-        #     if self.move_base_client.get_state() != GoalStatus.SUCCEEDED:
-        #         rospy.loginfo("[Topological Navigator] Could not re-orient robot")
-        #         return False
-
         rospy.loginfo("[Topological Navigator] Moving Robot...")
 
         self.sendMoveGoal(waypoint, desired_orientation)
@@ -103,27 +93,6 @@ class TopologicalNavigator:
         self.robot_pose.orientation.y = pose_msg.pose.pose.orientation.y
         self.robot_pose.orientation.z = pose_msg.pose.pose.orientation.z
         self.robot_pose.orientation.w = pose_msg.pose.pose.orientation.w
-
-    def getRobotOrientation(self):
-        orientation = [
-            self.robot_pose.orientation.w,
-            self.robot_pose.orientation.x,
-            self.robot_pose.orientation.y,
-            self.robot_pose.orientation.z,
-        ]
-
-        roll, pitch, yaw = euler.quat2euler(orientation)
-        return yaw
-
-    def clipToPi(self, angle):
-        angle = np.fmod(angle, 2 * np.pi)
-
-        if angle >= np.pi:
-            angle -= 2 * np.pi
-        elif angle <= -np.pi:
-            angle += 2 * np.pi
-
-        return angle
 
     def sendMoveGoal(self, waypoint, desired_orientation):
         self.goal_node.target_pose.header.frame_id = "/map"
