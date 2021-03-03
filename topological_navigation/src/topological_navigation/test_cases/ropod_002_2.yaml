@@ -1,0 +1,71 @@
+- area:
+    - id: "157"
+    - name: LA-010
+    - type: area
+    - sub_areas:
+        - id: "157"
+        - name: LA-010
+
+- area:
+    - id: "106"
+    - name: LA-022
+    - type: area
+    - sub_areas:
+        - id: "106"
+        - name: LA-022
+
+- area:
+    - id: "41"
+    - name: A049
+    - type: area
+    - sub_areas:
+        - id: "41"
+        - name: A049
+
+- area:
+    - id: "142"
+    - name: A053
+    - type: area
+    - sub_areas:
+        - id: "142"
+        - name: A053
+
+- area:
+    - id: "151"
+    - name: A054
+    - type: area
+    - sub_areas:
+        - id: "141"
+        - name: A054
+
+- area:
+    - id: "138"
+    - name: INT-A001
+    - type: area
+    - sub_areas:
+        - id: "138"
+        - name: INT-A001
+
+- area:
+    - id: "148"
+    - name: LA-015
+    - type: area
+    - sub_areas:
+        - id: "148"
+        - name: LA-015
+
+- area:
+    - id: "77"
+    - name: LA-017
+    - type: area
+    - sub_areas:
+        - id: "77"
+        - name: LA-017
+
+- area:
+    - id: "114"
+    - name: A045
+    - type: area
+    - sub_areas:
+        - id: "114"
+        - name: A045

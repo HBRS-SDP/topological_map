@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+    <arg name="map_name" default="brsu-full"/>
+
+    <node name="topological_map" pkg="topological_map_ros" type="topological_server" output="screen">
+<!--        <rosparam command="load" file="$(arg map_file)" /> -->
+    </node>
+</launch>

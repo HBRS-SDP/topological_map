@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>topological_map_ros</name>
+  <version>0.0.0</version>
+  <description>The topological_map package</description>
+
+  <maintainer email="robotics@inf.h-brs.de">MAS robotics</maintainer>
+
+  <author email="argentina.ortega@h-brs.de">Argentina Ortega</author>
+
+
+  <license>GPLv3</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>genmsg</buildtool_depend>
+
+
+  <depend>rospy</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <build_depend>message_generation</build_depend>
+
+   <exec_depend>message_runtime</exec_depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+
+  </export>
+</package>

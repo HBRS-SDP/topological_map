@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+
+import roslaunch
+import rospy
+
+from topological_navigation.topological_dispatcher import TopologicalDispatcher
+
+if __name__ == "__main__":
+    rospy.init_node("topological_dispatcher")
+
+    t_dispatcher = TopologicalDispatcher()
+    rospy.spin()

@@ -1,5 +1,0 @@
-string source
-string goal
----
-string[] path
-string[] directions

@@ -1,11 +1,22 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
-from catkin_pkg.python_setup import generate_distutils_setup
+from setuptools import setup
 
-d = generate_distutils_setup(
-    packages=['topological_map_ros'],
-    package_dir={'': 'ros/src'}
+setup(
+    name="topological_map",
+    packages=[
+        "topological_map_server",
+        "topological_map_server.common.map_utils",
+        "topological_map_server.maps",
+        "topological_map_server.maps.brsu-full",
+        "topological_map_server.maps.brsu-large",
+        "topological_map_server.maps.brsu-osm",
+        "topological_map_server.maps.brsu-small",
+        "topological_map_server.maps.brsu-small-free",
+        "topological_map_server.maps.brsu-small-obs",
+    ],
+    version="1.0.0",
+    description="BRSU Topological Map",
+    package_dir={"": "."},
+    package_data={"": ["*.yaml", "*.pgm"]},
 )
-
-setup(**d)
